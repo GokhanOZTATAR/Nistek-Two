@@ -1,6 +1,6 @@
 // ==========================================
 // NISTEK OTOMOTIV - JAVASCRIPT
-// Mobile Menu & Form Handling
+// Mobile Menu, Form Handling & Parts Filter
 // ==========================================
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -46,6 +46,33 @@ document.addEventListener('DOMContentLoaded', function() {
                 spans[0].style.transform = '';
                 spans[1].style.opacity = '';
                 spans[2].style.transform = '';
+            });
+        });
+    }
+    
+    // === PARTS CATALOG FILTER ===
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const partCards = document.querySelectorAll('.part-card');
+    
+    if (filterButtons.length > 0 && partCards.length > 0) {
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Update active button
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                const filterValue = this.getAttribute('data-filter');
+                
+                partCards.forEach(card => {
+                    const cardCategory = card.getAttribute('data-category');
+                    
+                    if (filterValue === 'all' || cardCategory === filterValue) {
+                        card.style.display = 'block';
+                        card.style.animation = 'fadeInUp 0.5s ease-out forwards';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
             });
         });
     }
@@ -142,7 +169,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const animatedElements = document.querySelectorAll(
         '.service-card, .feature-card, .value-card, ' +
         '.trust-item, .contact-info-card, .quick-contact-card, ' +
-        '.mv-card, .cert-card, .service-detail-card'
+        '.mv-card, .cert-card, .service-detail-card, .part-card'
     );
     
     animatedElements.forEach(el => {
