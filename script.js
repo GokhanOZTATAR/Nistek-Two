@@ -76,6 +76,71 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
+
+    // === IMAGE LIGHTBOX ===
+    const siteImages = document.querySelectorAll('img:not([data-no-lightbox])');
+
+    if (siteImages.length > 0) {
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML =
+            '<div class="image-lightbox-dialog">' +
+            '<button class="image-lightbox-close" type="button" aria-label="Görseli kapat">×</button>' +
+            '<img class="image-lightbox-image" src="" alt="">' +
+            '<p class="image-lightbox-caption"></p>' +
+            '</div>';
+
+        document.body.appendChild(lightbox);
+
+        const lightboxImage = lightbox.querySelector('.image-lightbox-image');
+        const lightboxCaption = lightbox.querySelector('.image-lightbox-caption');
+        const lightboxClose = lightbox.querySelector('.image-lightbox-close');
+
+        const closeLightbox = function() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        };
+
+        const openLightbox = function(image) {
+            lightboxImage.src = image.currentSrc || image.src;
+            lightboxImage.alt = image.alt || 'Büyütülmüş görsel';
+            lightboxCaption.textContent = image.alt || '';
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        };
+
+        siteImages.forEach(image => {
+            image.classList.add('lightbox-enabled');
+            image.setAttribute('tabindex', '0');
+            image.setAttribute('role', 'button');
+            image.setAttribute('aria-label', (image.alt || 'Görsel') + ' büyütmek için tıklayın');
+
+            image.addEventListener('click', function() {
+                openLightbox(image);
+            });
+
+            image.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    openLightbox(image);
+                }
+            });
+        });
+
+        lightboxClose.addEventListener('click', closeLightbox);
+
+        lightbox.addEventListener('click', function(event) {
+            if (event.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
     
     // === SMOOTH SCROLL FOR ANCHOR LINKS ===
     const anchorLinks = document.querySelectorAll('a[href^="#"]');
@@ -169,7 +234,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const animatedElements = document.querySelectorAll(
         '.service-card, .feature-card, .value-card, ' +
         '.trust-item, .contact-info-card, .quick-contact-card, ' +
-        '.mv-card, .cert-card, .service-detail-card, .part-card'
+        '.mv-card, .cert-card, .service-detail-card, .part-card, .highlight-card'
     );
     
     animatedElements.forEach(el => {
